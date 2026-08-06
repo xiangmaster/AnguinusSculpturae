@@ -48,9 +48,11 @@ already there preserves the lesion's internal texture.
 |---|---|---|---|
 | `image` — outside-breast translation | `nnUNetTrainerMamaSynthTranslationLPIPS_BS_48_MAEFinetune_ep_200` | `checkpoint_best` | 0–3 |
 | `lesion_image` — inside-breast translation | `nnUNetTrainerMamaSynthTranslationLPIPSSSIMDiceTverskyA02B08_LPIPS05_BS_48_MAEFinetune` | `checkpoint_best_dice` | 0–3 |
-| `lesion_seg` — lesion segmentation | `nnUNetTrainerMamaSynthLesionTverskyA02B08_BS_64_epoch_1000` | `checkpoint_best` | 0–3 |
+| `lesion_seg` — lesion segmentation from the pre-contrast slice | `nnUNetTrainerMamaSynthLesionTverskyA02B08_BS_64_epoch_1000` | `checkpoint_best` | 0–3 |
 | `breast` — breast segmentation | `nnUNetTrainerMamaSynthBreast_BS_32` | `checkpoint_final` | 0 |
 | `foreground` — tissue-support segmentation | `nnUNetTrainerMamaSynthForeground_BS_32` | `checkpoint_final` | 0 |
+
+All five are our own models, trained here and reading the pre-contrast slice.
 
 Composite settings: `feather 4`, `lesion_feather 2`, `lesion_gain 1.25`, `lesion_threshold 0.5`,
 `lesion_step 0.05`, `air_from pre`, flip TTA on. Each has a matching flag on the prediction entry
@@ -115,6 +117,21 @@ write the per-case `.b2nd` slice stacks the data loaders consume.
 | `Dataset626_MAE` | unlabeled slices | masked-autoencoder pretraining |
 | `Dataset627_foreground` | pre volumes + binary tissue-support masks | foreground segmenter |
 
+### Where the masks come from
+
+**Tissue support** — the foreground masks behind `Dataset627_foreground` were generated over the
+pre-contrast volumes with
+[Foreground-and-Anonymization-Area-Segmentation](https://github.com/MIC-DKFZ/Foreground-and-Anonymization-Area-Segmentation),
+the BVM 2025 nnU-Net framework for anatomical-foreground and deface-area segmentation in CT and MRI.
+Its anatomical-foreground output is the basis of the masks this 2D training uses.
+
+**Lesion** — the lesion masks provided by each cohort are used where they exist. Cases annotated only
+at the classification level, where malignancy is known but no mask was given, get a lesion label
+generated with the MAMA-MIA tumour segmentation model
+([Synapse syn60868042](https://www.synapse.org/Synapse:syn60868042/wiki/628716)).
+
+### Layout
+
 Each directory holds per-case `.b2nd` arrays, a `manifest.csv`, and a `splits_final.json` defining
 the folds. Slices are read, resampled and normalized on the fly by the data loaders, so **no nnU-Net
 preprocessing step is run** and `nnUNet_preprocessed` is never populated.
@@ -151,33 +168,46 @@ contract they write, the per-cohort mask-to-case-ID mapping, and `training_pre_s
 
 ## Training
 
-Order matters: the segmenters are needed while the translation models train, and the MAE checkpoint
-initialises them.
+MAE pretraining comes first, since its checkpoint initialises every later run. The translation
+objective additionally needs the **post-contrast** lesion segmenter its Dice term runs on, which is
+the one provided with the challenge, downloaded rather than trained:
 
-**1. MAE pretraining** — one run, reused by every translation model.
+> **<https://drive.google.com/file/d/1rliFnr-mNtISkJA0etm1dDBLdbHB3d4h/view>**
+
+Our own segmenters (step 2) read the pre-contrast slice and serve [inference](#inference).
+
+**1. MAE pretraining** — one run, and its checkpoint initialises **every run that follows**, the
+segmenters as well as the translation models. `-pretrained_weights` is available on all the
+`nnUNetv2_train_mamasynth*` entry points.
 
 ```bash
 nnUNetv2_train_mamasynth_mae <Dataset626_MAE> 0 -tr nnUNetTrainerMamaSynthMAE_BS_64_ep_1000
 ```
 
-**2. Segmentation models.**
+**2. Segmentation models** — all three read the pre-contrast image and are used at inference, each
+started from the MAE checkpoint.
 
 ```bash
-# breast (label 2 merged with the lesion)
-nnUNetv2_train_mamasynth <Dataset625_Pre_Seg> 0 -tr nnUNetTrainerMamaSynthBreast_BS_32
+# breast, from the pre-contrast image
+nnUNetv2_train_mamasynth <Dataset625_Pre_Seg> 0 \
+    -tr nnUNetTrainerMamaSynthBreast_BS_32 \
+    -pretrained_weights <mae_checkpoint.pth>
 
 # lesion, from the pre-contrast image
 nnUNetv2_train_mamasynth <Dataset625_Pre_Seg> <fold> \
-    -tr nnUNetTrainerMamaSynthLesionTverskyA02B08_BS_64_epoch_1000
+    -tr nnUNetTrainerMamaSynthLesionTverskyA02B08_BS_64_epoch_1000 \
+    -pretrained_weights <mae_checkpoint.pth>
 
 # tissue support, from its own dataset
 nnUNetv2_train_mamasynth_foreground <Dataset627_foreground> 0 \
-    -tr nnUNetTrainerMamaSynthForeground_BS_32
+    -tr nnUNetTrainerMamaSynthForeground_BS_32 \
+    -pretrained_weights <mae_checkpoint.pth>
 ```
 
 **3. Translation models**, initialised from the MAE checkpoint. The inside-breast model's objective
-includes a term computed through the frozen lesion segmenter, so `--seg-model-dir` must point at the
-model trained in step 2.
+adds a soft-Dice/Tversky term: the frozen **provided post-contrast** segmenter is run on the
+*synthesized* post slice and scored against the real lesion mask, so the generator is pushed to make
+a lesion that segmenter can find. `--seg-model-dir` points at that downloaded post-contrast model.
 
 ```bash
 # outside-breast model
@@ -191,7 +221,7 @@ nnUNetv2_train_mamasynth_translate <Dataset625_Pre_Seg> <fold> \
     -tr nnUNetTrainerMamaSynthTranslationLPIPSSSIMDiceTverskyA02B08_LPIPS05_BS_48_MAEFinetune \
     -pretrained_weights <mae_checkpoint.pth> \
     --pre-stats <training_pre_stats.json> \
-    --seg-model-dir <segmentation_model_root>
+    --seg-model-dir <provided_post_contrast_segmenter>
 ```
 
 Train folds 0–3 of the three ensembled slots to reproduce the submission. Results land under

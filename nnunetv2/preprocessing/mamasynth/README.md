@@ -69,8 +69,10 @@ python -m nnunetv2.preprocessing.mamasynth.create_dataset627_foreground_blosc2 \
     --workers 4
 ```
 
-`--foreground_mask_root` holds the 3D masks produced by running a foreground-segmentation tool over
-the pre images, laid out as `<chunk>/<source>__<rest>.nii.gz`.
+`--foreground_mask_root` holds the 3D masks, laid out as `<chunk>/<source>__<rest>.nii.gz`. They were
+generated over the pre images with
+[Foreground-and-Anonymization-Area-Segmentation](https://github.com/MIC-DKFZ/Foreground-and-Anonymization-Area-Segmentation),
+taking its anatomical-foreground output.
 
 ### Matching masks to case IDs
 
