@@ -96,7 +96,7 @@ pip install -e .
 This installs the `nnUNetv2_train_mamasynth*` and `nnUNetv2_predict_mamasynth*` entry points used
 below.
 
-Evaluation runs in a **separate environment** (`mamasynth-eval`) against the challenge evaluation
+Evaluation runs in a **separate environment** against the challenge evaluation
 script from [`mama-research/mama-synth`](https://github.com/mama-research/mama-synth/) — see
 [Evaluation](#evaluation).
 
