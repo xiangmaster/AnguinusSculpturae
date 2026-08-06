@@ -1,8 +1,7 @@
-"""Shared NIfTI reading helper for the MAMA-SYNTH dataset builders.
+"""NIfTI reading shared by the MAMA-SYNTH dataset builders.
 
-Copied verbatim from ``src/preprocessing/extract_tcga_tiff_pairs.py`` in the companion
-``mama-synth`` repository, which is the only function the blosc2 builders needed from
-that module. It lives here so this package has no dependency on the rest of that file.
+Loads a volume as float32 together with its 3D voxel spacing, which is what the builders
+need to pick the through-plane axis and record in-plane spacing.
 """
 
 from __future__ import annotations

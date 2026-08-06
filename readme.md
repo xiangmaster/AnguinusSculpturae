@@ -97,7 +97,8 @@ This installs the `nnUNetv2_train_mamasynth*` and `nnUNetv2_predict_mamasynth*` 
 below.
 
 Evaluation runs in a **separate environment** (`mamasynth-eval`) against the challenge evaluation
-script, which lives in the companion `mama-synth` repository, not here.
+script from [`mama-research/mama-synth`](https://github.com/mama-research/mama-synth/) — see
+[Evaluation](#evaluation).
 
 ---
 
@@ -105,9 +106,8 @@ script, which lives in the companion `mama-synth` repository, not here.
 
 Three blosc2 datasets are expected. The scripts that build them live under
 [`nnunetv2/preprocessing/mamasynth/`](nnunetv2/preprocessing/mamasynth/) and are documented in
-[its README](nnunetv2/preprocessing/mamasynth/README.md). They start from per-case 3D NIfTI volumes,
-which the companion `mama-synth` repository prepares from the source cohorts (DICOM conversion, phase
-selection, resampling).
+[its README](nnunetv2/preprocessing/mamasynth/README.md). They read per-case 3D NIfTI volumes and
+write the per-case `.b2nd` slice stacks the data loaders consume.
 
 | Dataset | Contents | Used for |
 |---|---|---|
@@ -254,9 +254,12 @@ isolate the contribution of each stage.
 
 ## Evaluation
 
-Evaluation is not part of this repository. It uses the challenge evaluation script from the companion
-`mama-synth` repository, run in its own environment (`mamasynth-eval`) against a folder of predicted
-slices. It reports MSE, LPIPS, SSIM_tumor, FRD, Dice, HD95 and the AUROC metrics.
+Scoring uses the challenge evaluation script from the MAMA-SYNTH challenge repository:
+
+> **<https://github.com/mama-research/mama-synth/>**
+
+`src/evaluation/evaluate.py` there is the Grand Challenge entry point. Run it in its own environment against a folder of predicted slices; it reports MSE, LPIPS, SSIM_tumor, FRD, Dice,
+HD95 and the AUROC metrics.
 
 ---
 
