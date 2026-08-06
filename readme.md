@@ -279,21 +279,10 @@ change weights, batch size or schedule.
 
 ---
 
-## Upstream
+## Contact
 
-nnU-Net documentation for the framework itself is under [`documentation/`](documentation/). Note that
-it describes the standard preprocess-then-train workflow, which this project bypasses.
+For questions, issues, or collaborations, please contact:
 
-Please cite nnU-Net when using this code:
+📧 benjamin.hamm@dkfz-heidelberg.de
 
-```text
-Isensee, F., Jaeger, P. F., Kohl, S. A., Petersen, J., & Maier-Hein, K. H. (2021).
-nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation.
-Nature Methods, 18(2), 203-211.
-```
-
-nnU-Net is developed by the Applied Computer Vision Lab of [Helmholtz Imaging](http://helmholtz-imaging.de)
-and the [Division of Medical Image Computing](https://www.dkfz.de/en/mic/index.php) at the
-[German Cancer Research Center (DKFZ)](https://www.dkfz.de/en/index.html). See [LICENSE](LICENSE).
-
-<img src="documentation/assets/HI_Logo.png" height="70px" /> <img src="documentation/assets/dkfz_logo.png" height="70px" />
+ <img src="documentation/assets/dkfz_logo.png" height="70px" />
