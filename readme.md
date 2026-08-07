@@ -125,6 +125,10 @@ pre-contrast volumes with
 the BVM 2025 nnU-Net framework for anatomical-foreground and deface-area segmentation in CT and MRI.
 Its anatomical-foreground output is the basis of the masks this 2D training uses.
 
+**Breast** — the breast labels (mask value 2 in `Dataset625_Pre_Seg`) were generated over the
+pre-contrast volumes with [BreastDivider](https://huggingface.co/ykirchhoff/BreastDividerModel), the
+nnU-Net model for left/right breast segmentation in clinical breast MRI.
+
 **Lesion** — the lesion masks provided by each cohort are used where they exist. Cases annotated only
 at the classification level, where malignancy is known but no mask was given, get a lesion label
 generated with the MAMA-MIA tumour segmentation model
