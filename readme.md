@@ -168,7 +168,7 @@ contract they write, the per-cohort mask-to-case-ID mapping, and `training_pre_s
 
 ## Training
 
-MAE pretraining comes first, since its checkpoint initialises every later run. The translation
+MAE pretraining comes first, since its checkpoint initialises the translation runs. The translation
 objective additionally needs the **post-contrast** lesion segmenter its Dice term runs on, which is
 the one provided with the challenge, downloaded rather than trained:
 
@@ -176,32 +176,30 @@ the one provided with the challenge, downloaded rather than trained:
 
 Our own segmenters (step 2) read the pre-contrast slice and serve [inference](#inference).
 
-**1. MAE pretraining** — one run, and its checkpoint initialises **every run that follows**, the
-segmenters as well as the translation models. `-pretrained_weights` is available on all the
-`nnUNetv2_train_mamasynth*` entry points.
+**1. MAE pretraining** — one run, and its checkpoint initialises **the translation models**. The
+segmenters were trained from scratch on nnU-Net's default schedule. `-pretrained_weights` is
+available on all the `nnUNetv2_train_mamasynth*` entry points, so the segmenters can be started
+from the MAE checkpoint as well, but the runs reported here were not.
 
 ```bash
 nnUNetv2_train_mamasynth_mae <Dataset626_MAE> 0 -tr nnUNetTrainerMamaSynthMAE_BS_64_ep_1000
 ```
 
-**2. Segmentation models** — all three read the pre-contrast image and are used at inference, each
-started from the MAE checkpoint.
+**2. Segmentation models** — all three read the pre-contrast image and are used at inference. These
+were trained from scratch, not from the MAE checkpoint.
 
 ```bash
 # breast, from the pre-contrast image
 nnUNetv2_train_mamasynth <Dataset625_Pre_Seg> 0 \
-    -tr nnUNetTrainerMamaSynthBreast_BS_32 \
-    -pretrained_weights <mae_checkpoint.pth>
+    -tr nnUNetTrainerMamaSynthBreast_BS_32
 
 # lesion, from the pre-contrast image
 nnUNetv2_train_mamasynth <Dataset625_Pre_Seg> <fold> \
-    -tr nnUNetTrainerMamaSynthLesionTverskyA02B08_BS_64_epoch_1000 \
-    -pretrained_weights <mae_checkpoint.pth>
+    -tr nnUNetTrainerMamaSynthLesionTverskyA02B08_BS_64_epoch_1000
 
 # tissue support, from its own dataset
 nnUNetv2_train_mamasynth_foreground <Dataset627_foreground> 0 \
-    -tr nnUNetTrainerMamaSynthForeground_BS_32 \
-    -pretrained_weights <mae_checkpoint.pth>
+    -tr nnUNetTrainerMamaSynthForeground_BS_32
 ```
 
 **3. Translation models**, initialised from the MAE checkpoint. The inside-breast model's objective
