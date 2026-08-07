@@ -1,6 +1,6 @@
 # MAMA-SYNTH — 2D pre-to-post contrast synthesis
 
-This repository holds the code for our MAMA-SYNTH challenge entry: generating a synthetic
+This repository holds the code for our [MAMA-SYNTH](https://mamasynth.grand-challenge.org/) challenge entry: generating a synthetic
 post-contrast breast-MRI slice from a pre-contrast slice, together with the segmentation models the
 synthesis pipeline depends on.
 
