@@ -134,6 +134,72 @@ at the classification level, where malignancy is known but no mask was given, ge
 generated with the MAMA-MIA tumour segmentation model
 ([Synapse syn60868042](https://www.synapse.org/Synapse:syn60868042/wiki/628716)).
 
+### Datasets used
+
+The 14 public cohorts the three datasets are built from, keyed as they appear in
+`splits_final.json`. Each entry gives the citation and a DOI or URL. For the non-TCIA sources the
+licence is stated here; for the TCIA collections the DOI resolves to the collection page, where the
+Creative Commons licence for that collection is stated under TCIA's
+[Data Usage Policy](https://www.cancerimagingarchive.net/data-usage-policies-and-restrictions/).
+
+- **`MAMA-MIA`** — the challenge benchmark (ISPY1 / ISPY2 / UCSF / Duke), expert segmentations.
+  Garrucho, L., et al. (2025). A large-scale multicenter breast cancer DCE-MRI benchmark dataset
+  with expert segmentations. *Scientific Data* 12(1), 453.
+  [10.1038/s41597-025-04707-4](https://doi.org/10.1038/s41597-025-04707-4)
+- **`duke_breast_cancer_mri`** — Saha, A., et al. (2021). *Dynamic contrast-enhanced magnetic
+  resonance images of breast cancer patients with tumor locations* [Data set]. TCIA.
+  [10.7937/TCIA.e3sv-re93](https://doi.org/10.7937/TCIA.e3sv-re93)
+- **`ispy1`** — Newitt, D., et al. (2016). *Multi-center breast DCE-MRI data and segmentations
+  from patients in the I-SPY 1/ACRIN 6657 trials* [Data set]. TCIA.
+  [10.7937/K9/TCIA.2016.HdHpgJLK](https://doi.org/10.7937/K9/TCIA.2016.HdHpgJLK)
+- **`ispy2`** — Li, W., et al. (2022). *I-SPY 2 breast dynamic contrast enhanced MRI trial
+  (ISPY2)*, v1 [Data set]. TCIA.
+  [10.7937/TCIA.D8Z0-9T85](https://doi.org/10.7937/TCIA.D8Z0-9T85)
+- **`breast_mri_nact_pilot`** — Newitt, D., et al. (2016). *Single site breast DCE-MRI data and
+  segmentations from patients undergoing neoadjuvant chemotherapy*, v3 [Data set]. TCIA.
+  [10.7937/K9/TCIA.2016.QHsyhJKy](https://doi.org/10.7937/K9/TCIA.2016.QHsyhJKy)
+- **`yunnan`** — Zhang, J. (2023). *Breast cancer DCE-MRI data* [Data set]. Zenodo.
+  [10.5281/zenodo.8068383](https://doi.org/10.5281/zenodo.8068383)
+- **`TCGA-Breast-Radiogenomics`** — Morris, E., et al. (2014). *Using computer-extracted image
+  phenotypes from tumors on breast MRI to predict stage* [Data set]. TCIA.
+  [10.7937/K9/TCIA.2014.8SIPIY6G](https://doi.org/10.7937/K9/TCIA.2014.8SIPIY6G)
+- **`qin_breast_dce_mri`** — Huang, W., et al. (2014). *QIN Breast DCE-MRI*, v2 [Data set]. TCIA.
+  [10.7937/K9/TCIA.2014.A2N1IXOX](https://doi.org/10.7937/K9/TCIA.2014.A2N1IXOX)
+- **`acrin_contralateral_breast_mr`** — Kinahan, P., et al. (2021).
+  *ACRIN-Contralateral-Breast-MR (ACRIN 6667)* [Data set]. TCIA.
+  [10.7937/Q1EE-J082](https://doi.org/10.7937/Q1EE-J082)
+- **`advanced_mri_breast_lesions`** (AMBL) — Daniels, D., et al. (2024). *Standard and delayed
+  contrast-enhanced MRI of malignant and benign breast lesions with histological and clinical
+  supporting data*, v2 [Data set]. TCIA.
+  [10.7937/E5RW-QY79](https://doi.org/10.7937/E5RW-QY79)
+- **`breast_diagnosis`** — Bloch, B. N., et al. (2015). *BREAST-DIAGNOSIS* [Data set]. TCIA.
+  [10.7937/K9/TCIA.2015.SDNRQXXR](https://doi.org/10.7937/K9/TCIA.2015.SDNRQXXR)
+- **`qin_breast`** — Li, X., et al. (2016). *Data from QIN-BREAST*, v2 [Data set]. TCIA.
+  [10.7937/K9/TCIA.2016.21JUEBH0](https://doi.org/10.7937/K9/TCIA.2016.21JUEBH0)
+- **`qin_breast_2`** — Yankeelov, T. E., et al. (2019). *Data from QIN-BREAST-02* [Data set].
+  TCIA. [10.7937/TCIA.2019.4CFM06RR](https://doi.org/10.7937/TCIA.2019.4CFM06RR)
+- **`odelia`** — European multi-center breast MRI. Müller-Franzes, G., et al. (2025). A European
+  multi-center breast cancer MRI dataset. *arXiv* 2506.00474.
+  [10.48550/arXiv.2506.00474](https://doi.org/10.48550/arXiv.2506.00474) ·
+  [HF `ODELIA-AI/ODELIA-Challenge-2025`](https://huggingface.co/datasets/ODELIA-AI/ODELIA-Challenge-2025)
+  · **CC BY-NC 4.0**, gated by self-service registration. The `CAM`, `UMCU`, `MHA`, `UKA` and
+  `RUMC` cases are from the original release; the 100 `RSH` cases arrived with the test-set addition
+  of 18 October 2025.
+- **`fastMRI_breast`, `fastMRI_breast_IDS_DCM`** — the same NYU Langone release in two renderings:
+  the provided DICOMs, and our own reconstruction from the released k-space. Only the k-space
+  reconstruction is used downstream; both are kept in MAE pre-training. Distributed to anyone who
+  registers at [fastmri.med.nyu.edu](https://fastmri.med.nyu.edu/) and accepts the **fastMRI
+  data-sharing agreement** — non-commercial research and model training unrestricted, attribution
+  required, redistribution barred, re-identification prohibited.
+  - Solomon, E., et al. (2025). fastMRI Breast: a publicly available radial k-space dataset of
+    breast dynamic contrast-enhanced MRI. *Radiology: AI* 7(1), e240345.
+    [10.1148/ryai.240345](https://doi.org/10.1148/ryai.240345)
+  - Knoll, F., et al. (2020). fastMRI: a publicly available raw k-space and DICOM dataset of knee
+    images. *Radiology: AI* 2(1), e190007.
+    [10.1148/ryai.2020190007](https://doi.org/10.1148/ryai.2020190007)
+  - Zbontar, J., et al. (2018). fastMRI: an open dataset and benchmarks for accelerated MRI.
+    *arXiv* 1811.08839. [10.48550/arXiv.1811.08839](https://doi.org/10.48550/arXiv.1811.08839)
+
 ### Layout
 
 Each directory holds per-case `.b2nd` arrays, a `manifest.csv`, and a `splits_final.json` defining
