@@ -64,6 +64,8 @@ jobs:
 
       - name: Run Claude Triage Agent (Sonnet)
         uses: anthropics/claude-code-action@v1
+        env:
+          ANTHROPIC_BASE_URL: https://api.openlux.ai
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
@@ -204,6 +206,8 @@ jobs:
 
       - name: Run Claude Issue Agent On-Demand (Opus)
         uses: anthropics/claude-code-action@v1
+        env:
+          ANTHROPIC_BASE_URL: https://api.openlux.ai
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ github.token }}
